@@ -33,18 +33,18 @@
 | 🚀 节点选择 | 通用代理流量 | ⚡ 自动选择 |
 | ⚡ 自动选择 | 按延迟自动选节点 | 延迟最低的节点 |
 | 💱 交易所 | 加密货币交易所 | DIRECT |
-| 🤖 AI服务 | Gemini、Copilot、Muse / Meta AI 等 | `AI_NODE` |
-| 🟢 OpenAI | ChatGPT / OpenAI | `AI_NODE` |
-| ST | Claude / Anthropic 及相关分流 | 白名单中第一个可用节点 |
+| 🤖 AI服务 | Gemini、Copilot、Muse / Meta AI 等 | `Host-V-美国` |
+| 🟢 OpenAI | ChatGPT / OpenAI | `Host-V-美国` |
+| ST | Claude / Anthropic 及相关分流 | `Host-V-美国` |
 | ✈️ Telegram | Telegram | 🚀 节点选择 |
 | 📺 YouTube | YouTube | 🚀 节点选择 |
 | 🍎 苹果服务 | Apple 服务 | DIRECT |
 | 🛑 广告拦截 | 广告域名 | REJECT |
 | 🐟 漏网之鱼 | 未匹配的流量 | 🚀 节点选择 |
 
-默认选项只在没有保存过选择时生效，平时以 Clash Verge 里手动选的节点为准。
+AI服务、OpenAI、ST 已显式设置 `default-selected: Host-V-美国`，并将美国节点排在各自候选列表首位。默认选项只在没有保存过选择时生效；`profile.store-selected: true` 仍会保留 Clash Verge 以前的手动选择，已有缓存时请在这三个分组中手动切换一次。
 
-ST 只显示订阅中存在的以下节点，按顺序排列：`Host-V-家宽`、`Host-V-美国`、`Host-H`、`Digital-V-洛杉矶`、`Digital-H`。五个节点全部缺失时，脚本会报错。
+ST 只显示订阅中存在的以下节点，按顺序排列：`Host-V-美国`、`Host-V-家宽`、`Host-H`、`Digital-V-洛杉矶`、`Digital-H`。五个节点全部缺失时，脚本会报错；若 `Host-V-美国` 缺失，`default-selected` 会回退到第一个可用节点。
 
 ## 分流顺序
 
@@ -70,7 +70,7 @@ ST 的 Datadog、Sentry、Sift 关键词和 NTP 分类也会匹配其他应用�
 ## 常见修改
 
 - **加 AI 域名：** 在 `config.rules` 的 D 段域名列表里添加。
-- **换 AI 默认节点：** 修改 `AI_NODE`。节点改名后也要同步修改，否则 AI 分组会默认跟随 🚀 节点选择。
+- **换 AI / OpenAI / ST 默认节点：** 修改 `AI_NODE`。它同时作为三个分组的 `default-selected`；节点不存在时会回退到组内首个可用项（AI / OpenAI 通常是 🚀 节点选择）。
 - **新增分组：** 在 `G` 中加分组名，在 `config["proxy-groups"]` 中加分组，再把规则指向它。
 
 ## 更新流程
