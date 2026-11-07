@@ -35,7 +35,7 @@
 | 💱 交易所 | 加密货币交易所 | DIRECT |
 | 🤖 AI服务 | Gemini、Copilot、Muse / Meta AI 等 | `AI_NODE` |
 | 🟢 OpenAI | ChatGPT / OpenAI | `AI_NODE` |
-| ST | Claude / Anthropic 及相关分流 | `AI_NODE` |
+| ST | Claude / Anthropic 及相关分流 | 白名单中第一个可用节点 |
 | ✈️ Telegram | Telegram | 🚀 节点选择 |
 | 📺 YouTube | YouTube | 🚀 节点选择 |
 | 🍎 苹果服务 | Apple 服务 | DIRECT |
@@ -43,6 +43,8 @@
 | 🐟 漏网之鱼 | 未匹配的流量 | 🚀 节点选择 |
 
 默认选项只在没有保存过选择时生效，平时以 Clash Verge 里手动选的节点为准。
+
+ST 只显示订阅中存在的以下节点，按顺序排列：`Host-V-家宽`、`Host-V-美国`、`Host-H`、`Digital-V-洛杉矶`、`Digital-H`。五个节点全部缺失时，脚本会报错。
 
 ## 分流顺序
 

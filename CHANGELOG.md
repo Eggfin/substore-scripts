@@ -6,6 +6,7 @@
 
 - 补充 Claude Code 的域名、CDN、认证、遥测和客服组件规则。
 - 加入 Anthropic 和 NTP 域名规则集，以及 Anthropic 的 IPv4、IPv6 和 ASN 兜底。
+- ST 只保留 `Host-V-家宽`、`Host-V-美国`、`Host-H`、`Digital-V-洛杉矶`、`Digital-H`，并按该顺序显示。
 - 更新订阅后，在 Clash Verge 的 ST 组确认所选节点。
 
 ## 2026-11-06

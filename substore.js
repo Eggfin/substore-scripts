@@ -56,6 +56,18 @@ const aiNodes = [
   ...names.filter(n => n !== AI_NODE)
 ];
 
+const stNodes = [
+  "Host-V-家宽",
+  "Host-V-美国",
+  "Host-H",
+  "Digital-V-洛杉矶",
+  "Digital-H"
+].filter(name => names.includes(name));
+
+if (!stNodes.length) {
+  throw new Error("ST 白名单中的节点均未出现在 all-vps 订阅中");
+}
+
 config.mode = "rule";
 config["allow-lan"] = false;
 config["log-level"] = "info";
@@ -98,7 +110,7 @@ config["proxy-groups"] = [
   {
     name: G.claude,
     type: "select",
-    proxies: aiNodes
+    proxies: stNodes
   },
   {
     name: G.telegram,
