@@ -225,6 +225,14 @@ config.rules = [
   "DOMAIN-SUFFIX,qishui.com,DIRECT",
   "DOMAIN,qishui.douyin.com,DIRECT",
 
+  // B2. Cloudflare 常用 IP / trace 检测入口 → ST
+  // 仅匹配官方检测目标，不转发整个 Cloudflare CDN / ASN
+  // 规则只判断目标 IP/主机名，不能单独匹配 URL 路径 /cdn-cgi/trace
+  "IP-CIDR,1.1.1.1/32," + G.claude + ",no-resolve",
+  "DOMAIN,one.one.one.one," + G.claude,
+  "DOMAIN,cloudflare.com," + G.claude,
+  "DOMAIN,www.cloudflare.com," + G.claude,
+
   // C. Claude / Anthropic → ST
   ...suffix([
     "claude.ai",
