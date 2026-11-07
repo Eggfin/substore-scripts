@@ -2,6 +2,12 @@
 
 ## 2026-11-08
 
+### Cloudflare 官方检测入口跟随 ST 策略组
+
+- 将 `1.1.1.1/32`、`one.one.one.one`、`cloudflare.com`、`www.cloudflare.com` 加入 ST 精确分流，规则位于通用国外流量和 Claude / OpenAI 分流之前。
+- 只覆盖上述目标，保留其余 Cloudflare CDN 与业务分流不变。单个目标主机的其他 URL 路径也会命中。
+- JavaScript 语法、模拟生成规则、ST 默认节点、规则顺序及 Bitget 分流回归检查通过；`ip.net.coffee` 的具体检测主机及客户端实际出口尚待连接日志确认。
+
 ### AI、OpenAI、ST 默认节点切换为 Host-V-美国
 
 - 三个分组显式指定 `default-selected: Host-V-美国`，AI / OpenAI 首选节点由家宽切换到美国，ST 白名单调整为美国节点优先。
