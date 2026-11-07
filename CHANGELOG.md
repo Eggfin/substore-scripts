@@ -1,5 +1,13 @@
 # 更新记录
 
+## 2026-11-07
+
+### Claude 分流组改名为 ST
+
+- 补充 Claude Code 的域名、CDN、认证、遥测和客服组件规则。
+- 加入 Anthropic 和 NTP 域名规则集，以及 Anthropic 的 IPv4、IPv6 和 ASN 兜底。
+- 更新订阅后，在 Clash Verge 的 ST 组确认所选节点。
+
 ## 2026-11-06
 
 ### 根据实时日志补齐 Bitget 分流

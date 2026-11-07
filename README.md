@@ -35,7 +35,7 @@
 | 💱 交易所 | 加密货币交易所 | DIRECT |
 | 🤖 AI服务 | Gemini、Copilot、Muse / Meta AI 等 | `AI_NODE` |
 | 🟢 OpenAI | ChatGPT / OpenAI | `AI_NODE` |
-| 🟣 Claude AI | Claude / Anthropic | `AI_NODE` |
+| ST | Claude / Anthropic 及相关分流 | `AI_NODE` |
 | ✈️ Telegram | Telegram | 🚀 节点选择 |
 | 📺 YouTube | YouTube | 🚀 节点选择 |
 | 🍎 苹果服务 | Apple 服务 | DIRECT |
@@ -50,7 +50,7 @@
 
 1. 本地和局域网地址直连
 2. 汽水音乐直连
-3. Claude / Anthropic
+3. Claude / Anthropic 走 ST，包括遥测、客服组件、NTP 域名和 IP / ASN 兜底
 4. OpenAI / ChatGPT（独立走 🟢 OpenAI，包含 OpenAI 远程规则集）
 5. 其他 AI 服务，以及 Muse / Meta AI
 6. 加密货币交易所
@@ -60,6 +60,8 @@
 10. 中国大陆域名和 IP 直连
 11. 其他国外域名走 🚀 节点选择
 12. 其余流量走 🐟 漏网之鱼
+
+ST 的 Datadog、Sentry、Sift 关键词和 NTP 分类也会匹配其他应用的相关流量。NTP 流量走代理需要所选节点支持 UDP。
 
 新增规则时，要放在 `RULE-SET,Foreign` 和 `MATCH` 之前，否则不会生效。
 

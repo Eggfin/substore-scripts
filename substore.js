@@ -20,7 +20,7 @@ const G = {
   crypto: "💱 交易所",
   ai: "🤖 AI服务",
   openai: "🟢 OpenAI",
-  claude: "🟣 Claude AI",
+  claude: "ST",
   telegram: "✈️ Telegram",
   youtube: "📺 YouTube",
   apple: "🍎 苹果服务",
@@ -163,6 +163,8 @@ config["rule-providers"] = {
   // AI 服务
   Claude: classical("claude", "Claude"),
   Anthropic: classical("anthropic", "Anthropic"),
+  AnthropicDomains: mrs("anthropic-domains", "geosite", "anthropic"),
+  NTP: mrs("ntp", "geosite", "category-ntp"),
   OpenAI: classical("openai", "OpenAI"),
   Gemini: classical("gemini", "Gemini"),
   Copilot: classical("copilot", "Copilot"),
@@ -208,16 +210,37 @@ config.rules = [
   "DOMAIN-SUFFIX,qishui.com,DIRECT",
   "DOMAIN,qishui.douyin.com,DIRECT",
 
-  // C. Claude：最高优先级的 AI 规则
+  // C. Claude / Anthropic → ST
   ...suffix([
     "claude.ai",
     "claude.com",
     "anthropic.com",
+    "clau.de",
+    "claudemcpclient.com",
+    "claudemcpcontent.com",
     "claudeusercontent.com",
-    "anthropicusercontent.com"
+    "anthropicusercontent.com",
+    "sentry.io",
+    "statsigapi.net",
+    "intercom.io",
+    "intercomcdn.com"
   ], G.claude),
+  `DOMAIN,servd-anthropic-website.b-cdn.net,${G.claude}`,
+  `DOMAIN,anthropic.com.cdn.cloudflare.net,${G.claude}`,
+  `DOMAIN,anthropic.auth0.com,${G.claude}`,
+  `DOMAIN,anthropic-com.ghost.io,${G.claude}`,
+  `DOMAIN,browser-intake-us5-datadoghq.com,${G.claude}`,
+  `DOMAIN,cdn.usefathom.com,${G.claude}`,
+  `DOMAIN-KEYWORD,datadog,${G.claude}`,
+  `DOMAIN-KEYWORD,sentry,${G.claude}`,
+  `DOMAIN-KEYWORD,sift,${G.claude}`,
   `RULE-SET,Claude,${G.claude}`,
   `RULE-SET,Anthropic,${G.claude}`,
+  `RULE-SET,AnthropicDomains,${G.claude}`,
+  `RULE-SET,NTP,${G.claude}`,
+  `IP-CIDR,160.79.104.0/21,${G.claude},no-resolve`,
+  `IP-CIDR6,2607:6bc0::/32,${G.claude},no-resolve`,
+  `IP-ASN,399358,${G.claude},no-resolve`,
 
   // D. OpenAI：独立分组，优先于通用 AI 和兜底规则
   ...suffix([
