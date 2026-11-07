@@ -46,6 +46,12 @@ AI服务、OpenAI、ST 已显式设置 `default-selected: Host-V-美国`，并�
 
 ST 只显示订阅中存在的以下节点，按顺序排列：`Host-V-美国`、`Host-V-家宽`、`Host-H`、`Digital-V-洛杉矶`、`Digital-H`。五个节点全部缺失时，脚本会报错；若 `Host-V-美国` 缺失，`default-selected` 会回退到第一个可用节点。
 
+## Cloudflare 检测与 ST 同出口
+
+- 将常用 Cloudflare 官方 trace / 出口检测目标 `1.1.1.1/32`、`one.one.one.one`、`cloudflare.com` 和 `www.cloudflare.com` 精确指向 `ST`，使这些请求使用 ST 当前选中的节点。
+- 只匹配列出的 IP 和主机，不覆盖整个 Cloudflare CDN、IP 段、ASN 或接入 Cloudflare 的第三方站点。Mihomo 不能仅凭域名分流规则区分同一主机下的 `/cdn-cgi/trace` 路径，因此列出的主机名的其他请求也会走 ST。
+- `ip.net.coffee/claude` 使用 Cloudflare trace 检测，但公开页面未确认其实际请求主机。更新订阅后在 Clash Verge「连接」里查看检测请求的目标和命中规则；如使用其他目标，需按日志精确补充。尚未做客户端出口实测。
+
 ## 分流顺序
 
 规则从上到下匹配，命中即停止：
