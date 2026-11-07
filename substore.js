@@ -48,8 +48,8 @@ for (const node of nodes) {
 
 const names = nodes.map(n => n.name);
 
-// AI 分组优先使用的节点
-const AI_NODE = "Host-V-家宽";
+// AI / OpenAI / ST 三个分组默认优先使用的节点
+const AI_NODE = "Host-V-美国";
 const aiNodes = [
   ...names.filter(n => n === AI_NODE),
   G.main,
@@ -57,8 +57,8 @@ const aiNodes = [
 ];
 
 const stNodes = [
+  AI_NODE,
   "Host-V-家宽",
-  "Host-V-美国",
   "Host-H",
   "Digital-V-洛杉矶",
   "Digital-H"
@@ -100,16 +100,19 @@ config["proxy-groups"] = [
   {
     name: G.ai,
     type: "select",
+    "default-selected": AI_NODE,
     proxies: aiNodes
   },
   {
     name: G.openai,
     type: "select",
+    "default-selected": AI_NODE,
     proxies: aiNodes
   },
   {
     name: G.claude,
     type: "select",
+    "default-selected": AI_NODE,
     proxies: stNodes
   },
   {
