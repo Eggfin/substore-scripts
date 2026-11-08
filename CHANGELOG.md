@@ -2,6 +2,12 @@
 
 ## 2026-11-08
 
+### ST 白名单移除 Digital 节点
+
+- 按要求从 ST 分组删除 `Digital-V-洛杉矶` 和 `Digital-H`，现在仅允许 `Host-V-美国`、`Host-V-家宽`、`Host-H`（需存在于 `all-vps` 中）。
+- 保持美国节点首选、原有 Claude / Cloudflare 精确分流及其他策略组不变；不影响 `all-vps` 订阅中的 Digital 节点。
+- 通过 JavaScript 语法、模拟 Sub-Store 生成结果、缺失节点降级及 AI/交易所规则回归检查；客户端实际加载需更新订阅确认。
+
 ### Cloudflare 官方检测入口跟随 ST 策略组
 
 - 将 `1.1.1.1/32`、`one.one.one.one`、`cloudflare.com`、`www.cloudflare.com` 加入 ST 精确分流，规则位于通用国外流量和 Claude / OpenAI 分流之前。
