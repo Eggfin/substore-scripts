@@ -2,6 +2,14 @@
 
 ## 2026-11-08
 
+### 收紧 AI、视频服务、交易所的候选节点
+
+- `🤖 AI服务` 与 `🟢 OpenAI` 只保留指定的七个节点及 `🚀 节点选择`，优先 `Host-V-美国`。
+- `✈️ Telegram`、`📺 YouTube` 移除 `Host-V-美国`、`Host-H`、`Host-V-家宽` 的直接选项，新增 `⚡ 自动选择` 并保留 `🚀 节点选择` 和其他节点。
+- `💱 交易所` 只列出 `DIRECT`、`🚀 节点选择` 和名称识别为香港的节点（包括“香港”、Hong Kong、HongKong、HK/HKG 标记）；节点仍从 `all-vps` 动态获取。
+- ST、Cloudflare、各服务域名匹配规则和其他分组未改变。保留 `store-selected`；旧选择仍可能覆盖默认选择。
+- 通过 JavaScript 语法、模拟 Sub-Store 生成、节点缺失、ST、OpenAI、Bitget 及 Cloudflare 回归检查；客户端出站需更新订阅后检查。
+
 ### ST 白名单移除 Digital 节点
 
 - 按要求从 ST 分组删除 `Digital-V-洛杉矶` 和 `Digital-H`，现在仅允许 `Host-V-美国`、`Host-V-家宽`、`Host-H`（需存在于 `all-vps` 中）。
