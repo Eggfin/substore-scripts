@@ -44,7 +44,7 @@
 
 AI服务、OpenAI、ST 已显式设置 `default-selected: Host-V-美国`，并将美国节点排在各自候选列表首位。默认选项只在没有保存过选择时生效；`profile.store-selected: true` 仍会保留 Clash Verge 以前的手动选择，已有缓存时请在这三个分组中手动切换一次。
 
-ST 只显示订阅中存在的以下节点，按顺序排列：`Host-V-美国`、`Host-V-家宽`、`Host-H`、`Digital-V-洛杉矶`、`Digital-H`。五个节点全部缺失时，脚本会报错；若 `Host-V-美国` 缺失，`default-selected` 会回退到第一个可用节点。
+ST 只显示订阅中存在的以下节点，按顺序排列：`Host-V-美国`、`Host-V-家宽`、`Host-H`。三个节点全部缺失时，脚本会报错；若 `Host-V-美国` 缺失，`default-selected` 会回退到第一个可用节点。`Digital-*` 节点即使存在于 `all-vps` 订阅中，也不出现在 ST 组内。
 
 ## Cloudflare 检测与 ST 同出口
 
