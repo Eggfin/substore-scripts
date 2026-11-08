@@ -48,13 +48,33 @@ for (const node of nodes) {
 
 const names = nodes.map(n => n.name);
 
-// AI / OpenAI / ST 三个分组默认优先使用的节点
+// AI / OpenAI 仅显示指定白名单内现有节点，另保留「节点选择」
 const AI_NODE = "Host-V-美国";
-const aiNodes = [
-  ...names.filter(n => n === AI_NODE),
-  G.main,
-  ...names.filter(n => n !== AI_NODE)
+const aiWhitelist = [
+  AI_NODE,
+  "Host-H",
+  "Host-V-家宽",
+  "Digital-V-洛杉矶",
+  "Digital-H",
+  "NBcloud-V-日本",
+  "NBcloud-H-日本"
 ];
+const aiNodes = [
+  ...aiWhitelist.filter(name => names.includes(name)),
+  G.main
+];
+
+// Telegram / YouTube 排除三个 Host 节点；保留节点选择和自动选择
+const mediaExcluded = new Set([AI_NODE, "Host-H", "Host-V-家宽"]);
+const mediaNodes = [
+  G.main,
+  G.auto,
+  ...names.filter(name => !mediaExcluded.has(name))
+];
+
+// 香港节点按名称动态识别：香港、Hong Kong、HongKong、HK / HKG（含数字后缀）
+const hkPattern = /香港|hong[ _-]*kong|(?:^|[ _-])hkg?(?=[0-9]|$|[ _-])/i;
+const hkNodes = names.filter(name => hkPattern.test(name));
 
 const stNodes = [
   AI_NODE,
@@ -93,7 +113,7 @@ config["proxy-groups"] = [
   {
     name: G.crypto,
     type: "select",
-    proxies: ["DIRECT", G.main, ...names]
+    proxies: ["DIRECT", G.main, ...hkNodes]
   },
   {
     name: G.ai,
@@ -116,12 +136,12 @@ config["proxy-groups"] = [
   {
     name: G.telegram,
     type: "select",
-    proxies: [G.main, ...names]
+    proxies: mediaNodes
   },
   {
     name: G.youtube,
     type: "select",
-    proxies: [G.main, ...names]
+    proxies: mediaNodes
   },
   {
     name: G.apple,
