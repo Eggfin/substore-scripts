@@ -59,9 +59,7 @@ const aiNodes = [
 const stNodes = [
   AI_NODE,
   "Host-V-家宽",
-  "Host-H",
-  "Digital-V-洛杉矶",
-  "Digital-H"
+  "Host-H"
 ].filter(name => names.includes(name));
 
 if (!stNodes.length) {
