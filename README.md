@@ -46,6 +46,14 @@ AI服务、OpenAI、ST 已显式设置 `default-selected: Host-V-美国`，并�
 
 ST 只显示订阅中存在的以下节点，按顺序排列：`Host-V-美国`、`Host-V-家宽`、`Host-H`。三个节点全部缺失时，脚本会报错；若 `Host-V-美国` 缺失，`default-selected` 会回退到第一个可用节点。`Digital-*` 节点即使存在于 `all-vps` 订阅中，也不出现在 ST 组内。
 
+其他分组的候选节点限制（均保留 `🚀 节点选择`）：
+
+- `🤖 AI服务`、`🟢 OpenAI`：按顺序只列出 `Host-V-美国`（默认）、`Host-H`、`Host-V-家宽`、`Digital-V-洛杉矶`、`Digital-H`、`NBcloud-V-日本`、`NBcloud-H-日本`，最后保留 `🚀 节点选择`；订阅里不存在的节点自动略过。
+- `✈️ Telegram`、`📺 YouTube`：保留 `🚀 节点选择`，增加 `⚡ 自动选择`，并显示其他节点，但不再直接列出 `Host-V-美国`、`Host-H`、`Host-V-家宽`。
+- `💱 交易所`：保留 `DIRECT`（首选）、`🚀 节点选择` 和订阅中名称含“香港”、Hong Kong、HongKong 或 HK/HKG 地区标记的节点；其他节点不直接出现在该组。若当前订阅无香港节点，则仅保留前两个选项。
+- **注意**：`🚀 节点选择` 和 `⚡ 自动选择` 是间接入口，可能选到不在某组直接列表中的节点。这次只限制直接显示的节点，没有改变全局两个入口的可选范围。
+
+
 ## Cloudflare 检测与 ST 同出口
 
 - 将常用 Cloudflare 官方 trace / 出口检测目标 `1.1.1.1/32`、`one.one.one.one`、`cloudflare.com` 和 `www.cloudflare.com` 精确指向 `ST`，使这些请求使用 ST 当前选中的节点。
