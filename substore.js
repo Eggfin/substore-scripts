@@ -16,7 +16,6 @@ if (!nodes.length) {
 
 const G = {
   main: "🚀 节点选择",
-  auto: "⚡ 自动选择",
   crypto: "💱 交易所",
   ai: "🤖 AI服务",
   openai: "🟢 OpenAI",
@@ -62,11 +61,10 @@ const aiNodes = [
   G.main
 ];
 
-// Telegram / YouTube 排除三个 Host 节点；保留节点选择和自动选择
+// Telegram / YouTube 排除三个 Host 节点；保留节点选择
 const mediaExcluded = new Set([AI_NODE, "Host-H", "Host-V-家宽"]);
 const mediaNodes = [
   G.main,
-  G.auto,
   ...names.filter(name => !mediaExcluded.has(name))
 ];
 
@@ -98,15 +96,7 @@ config["proxy-groups"] = [
   {
     name: G.main,
     type: "select",
-    proxies: [G.auto, ...names, "DIRECT"]
-  },
-  {
-    name: G.auto,
-    type: "url-test",
-    proxies: names,
-    url: "https://www.gstatic.com/generate_204",
-    interval: 300,
-    tolerance: 50
+    proxies: [...names, "DIRECT"]
   },
   {
     name: G.crypto,
