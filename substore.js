@@ -48,16 +48,14 @@ for (const node of nodes) {
 
 const names = nodes.map(n => n.name);
 
-// AI / OpenAI 仅显示指定白名单内现有节点，另保留「节点选择」
+// AI / OpenAI 仅显示指定白名单内现有节点，移除日本节点，另保留「节点选择」
 const AI_NODE = "Host-V-美国";
 const aiWhitelist = [
   AI_NODE,
   "Host-H",
   "Host-V-家宽",
   "Digital-V-洛杉矶",
-  "Digital-H",
-  "NBcloud-V-日本",
-  "NBcloud-H-日本"
+  "Digital-H"
 ];
 const aiNodes = [
   ...aiWhitelist.filter(name => names.includes(name)),
