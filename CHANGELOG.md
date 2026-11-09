@@ -2,6 +2,14 @@
 
 ## 2026-11-09
 
+### ST 第一阶段 Fail-Closed：固定唯一节点，缺失时拒绝连接
+
+- ST `select` 组只允许 `Host-V-美国`，删除 `Host-V-家宽`、`Host-H` 两个直接候选；不包含自动选择、`DIRECT`、主策略组或其他备用节点。
+- 目标节点缺失时，输出 `proxies: [REJECT]` 且 `default-selected: REJECT`；永不生成空 ST 组，规避 Stash 对空策略组视为 `DIRECT` 的行为。为 Mihomo 设置 `empty-fallback: REJECT` 作为附加保护（不依赖该字段兼容 Stash）。
+- ST 原有 Claude / Anthropic、Cloudflare 检测等规则不变；AI服务、OpenAI、Telegram、YouTube、交易所和其他分组均不修改；保留 `store-selected`。
+- 使用 JavaScript + JSON 模拟 YAML 接口，105 组输入、1,051 项断言通过，包括节点存在/缺失、重名/保留名冲突、空订阅报错、规则集与其他分组不变等。未执行 Sub-Store 原生 YAML、Mihomo/Stash 内核、VPN 中断后流量或出口 IP 实测。
+- **尚未实现**同名节点内容防篡改、同节点出口 IP 锁定、VPN 系统级 Kill Switch 和所有 Claude 流量完整覆盖，列入第二阶段 Notion 设计。
+
 ### 删除自动选择代理组
 
 - 删除 `⚡ 自动选择` 的 `url-test` 代理组、对应常量和测速配置。
