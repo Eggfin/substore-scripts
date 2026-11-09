@@ -72,15 +72,11 @@ const mediaNodes = [
 const hkPattern = /香港|hong[ _-]*kong|(?:^|[ _-])hkg?(?=[0-9]|$|[ _-])/i;
 const hkNodes = names.filter(name => hkPattern.test(name));
 
-const stNodes = [
-  AI_NODE,
-  "Host-V-家宽",
-  "Host-H"
-].filter(name => names.includes(name));
-
-if (!stNodes.length) {
-  throw new Error("ST 白名单中的节点均未出现在 all-vps 订阅中");
-}
+// ST 第一阶段 Fail-Closed：只允许唯一节点；节点缺失时显式拒绝，避免 Stash 空组回退 DIRECT
+const ST_NODE = "Host-V-美国";
+const stNodes = names.includes(ST_NODE)
+  ? [ST_NODE]
+  : ["REJECT"];
 
 config.mode = "rule";
 config["allow-lan"] = false;
@@ -118,7 +114,8 @@ config["proxy-groups"] = [
   {
     name: G.claude,
     type: "select",
-    "default-selected": AI_NODE,
+    "default-selected": stNodes[0],
+    "empty-fallback": "REJECT",
     proxies: stNodes
   },
   {
