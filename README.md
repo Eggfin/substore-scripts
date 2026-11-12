@@ -36,7 +36,7 @@
 | 💱 交易所 | 加密货币交易所 | DIRECT |
 | 🤖 AI服务 | Gemini、Copilot、Muse / Meta AI 等 | `Host-V-美国`（存在时） |
 | 🟢 OpenAI | ChatGPT / OpenAI | `Host-V-美国`（存在时） |
-| ST | Claude / Anthropic 及相关分流 | 仅 `Host-V-美国`，缺失时 `REJECT` |
+| ST | Claude / Anthropic 及相关分流 | `Host-V-美国` 优先，其次 `Host-V-家宽`；都缺失时 `REJECT` |
 | ✈️ Telegram | Telegram | 🚀 节点选择 |
 | 📺 YouTube | YouTube | 🚀 节点选择 |
 | 🍎 苹果服务 | Apple 服务 | DIRECT |
@@ -45,14 +45,12 @@
 
 AI服务、OpenAI 仍显式设置 `default-selected: Host-V-美国`，美国节点存在时也位于各自候选列表首位。`profile.store-selected: true` 保留客户端以前的选择；更新订阅不表示一定覆盖已有选择，需要在「代理」页确认。
 
-### ST 第一阶段 Fail-Closed（2026-11-09）
+### ST 节点选择与阻断（2026-11-12）
 
-- ST 策略组固定为 `select`，只包含 `Host-V-美国` 一个代理，不再显示 `Host-V-家宽`、`Host-H` 或其他节点，不使用自动切换、直连或主策略组作为备用。
-- 当 `Host-V-美国` 在订阅中缺失时，ST 组自动变为 `proxies: [REJECT]`，`default-selected` 同步设为 `REJECT`。**绝不输出空 ST 组**：Stash 官方说明空组会视为 DIRECT。
-- 额外设置 `empty-fallback: REJECT`（Mihomo 支持此字段）；由于 ST 始终非空，不依赖它保护 Stash。此阶段只保证匹配 ST 的请求没有脚本层面的换节点/直连候选，不能锁定同一节点的实际出口公网 IP。
-- 原有 ST 分流域名、IP/ASN、Cloudflare 检测规则及其他策略组保持不变。`profile.store-selected` 仍为 `true`，客户端原来的 ST 手动选择可能残留：更新订阅后务必确认 ST 实际选中唯一节点或 `REJECT`，重新建立连接进行验证。
-- 如实际服务器地址、端口、上游代理发生变化，即使订阅仍称其为 `Host-V-美国`，本阶段也不会检测出来；真正的出口 IP 锁定和监控留待第二阶段。
-- 其他未覆盖的 Claude 请求可能命中通用组或客户端绕过代理，不属于此 ST 策略组的阻断范围。
+- ST 为手动 `select` 组，按顺序列出订阅中存在的 `Host-V-美国`、`Host-V-家宽`；不包含 `Host-H`、自动选择、DIRECT 或主策略组。
+- 默认选首个存在的白名单节点；两个名称都不存在时输出 `proxies: [REJECT]`、`default-selected: REJECT`，避免空组被 Stash 视为 DIRECT。`empty-fallback: REJECT` 仍作为 Mihomo 的附加保护。
+- 新增第二个候选意味着不再保证唯一节点或唯一出口。订阅生成时若美国节点缺失、家宽存在，默认候选会变为家宽；`select` 不是自动故障切换，节点连接失败不会自动切换。`profile.store-selected` 可能保留客户端选择，请更新配置后确认实际选项并重新建立连接。
+- 原有 ST 规则和其他分组不变；节点同名内容变化、实际公网出口 IP、VPN 系统级 Kill Switch 及未命中 ST 的流量仍未受此脚本保障。
 
 其他分组的候选节点限制（均保留 `🚀 节点选择`）：
 
@@ -63,7 +61,7 @@ AI服务、OpenAI 仍显式设置 `default-selected: Host-V-美国`，美国节�
 
 ### 已知边界
 
-- AI服务 / OpenAI 在美国节点缺失时，脚本会从候选中略过它，但 `default-selected` 仍写 `Host-V-美国`；Mihomo 文档说明，默认节点不存在时选择组内首个候选，客户端已有选择也需确认。AI / OpenAI 按白名单顺序保留现有节点，只有五个白名单节点全部缺失时才仅剩 `🚀 节点选择`。**ST 不使用这一回退逻辑，目标节点缺失时只选 `REJECT`**。
+- AI服务 / OpenAI 在美国节点缺失时，脚本会从候选中略过它，但 `default-selected` 仍写 `Host-V-美国`；Mihomo 文档说明，默认节点不存在时选择组内首个候选，客户端已有选择也需确认。AI / OpenAI 按白名单顺序保留现有节点，只有五个白名单节点全部缺失时才仅剩 `🚀 节点选择`。**ST 只在两个白名单节点都缺失时选择 `REJECT`**。
 - 节点去重发生在媒体组排除之前。同名 Host 节点被改名为 `Host-H #2` 等名称后，不再精确匹配排除名单，可能出现在 Telegram / YouTube 的直接选项中。此边界暂未修改。
 
 ## Cloudflare 检测与 ST 同出口
@@ -98,7 +96,7 @@ ST 的 Datadog、Sentry、Sift 关键词和 NTP 分类也会匹配其他应用�
 
 - **加 AI 域名：** OpenAI 域名加在 `config.rules` 的 D 段 OpenAI 列表，其他 AI 域名加在后面的「Gemini / 其他 AI」列表。
 - **换 AI / OpenAI 默认节点：** 修改 `AI_NODE`。它只控制 AI服务 / OpenAI 的默认值与白名单首项。
-- **调整 ST 唯一节点：** 修改 `ST_NODE`，并确认订阅中存在此名称。缺失时 ST 使用 `REJECT`，不会从其他组自动挑选。
+- **调整 ST 候选节点：** 修改 `ST_WHITELIST`，并确认订阅中名称精确匹配。全部缺失时 ST 使用 `REJECT`，不会从其他组自动挑选。
 - **新增分组：** 在 `G` 中加分组名，在 `config["proxy-groups"]` 中加分组，再把规则指向它。
 
 ## 更新流程
@@ -106,12 +104,12 @@ ST 的 Datadog、Sentry、Sift 关键词和 NTP 分类也会匹配其他应用�
 1. 修改 `substore.js`，同步更新 README 和 [更新记录](CHANGELOG.md)，测试后再推送到 `main`。
 2. 等几分钟，让 GitHub Raw 链接更新。
 3. 在 Sub-Store 重新生成或预览文件，再在 Clash Verge 中更新订阅并确认当前启用的配置。
-4. 在「代理」页检查分组及当前节点；确认 ST 只包含 `Host-V-美国`（或缺失时 `REJECT`），没有其他候选与 `DIRECT`；必要时重新手动选择正确选项。
+4. 在「代理」页检查分组及当前节点；确认 ST 仅包含订阅中存在的 `Host-V-美国`、`Host-V-家宽`（都缺失时 `REJECT`），没有其他候选与 `DIRECT`；必要时重新手动选择正确选项。
 5. 断开并重新建立需要验证的连接，再查看命中规则和实际代理链。
 
 ## 最近验证范围
 
-2026-11-09 ST 第一阶段 Fail-Closed 修改：105 组模拟节点输入（含目标缺失、重名、无节点及混合随机用例），共 1,051 项断言通过；验证 ST 的唯一候选、缺失时 `REJECT`、`default-selected`、`empty-fallback`、其余分组与规则集/规则完全一致。使用 JavaScript + JSON 桥接模拟 Sub-Store YAML 接口，**尚未在 Stash/Mihomo 客户端、实际节点断连或真实出口 IP 环境验证**。
+2026-11-09 历史版本 ST 第一阶段 Fail-Closed 修改（唯一节点行为已于 2026-11-12 调整）：105 组模拟节点输入（含目标缺失、重名、无节点及混合随机用例），共 1,051 项断言通过；验证 ST 的唯一候选、缺失时 `REJECT`、`default-selected`、`empty-fallback`、其余分组与规则集/规则完全一致。使用 JavaScript + JSON 桥接模拟 Sub-Store YAML 接口，**尚未在 Stash/Mihomo 客户端、实际节点断连或真实出口 IP 环境验证**。
 
 2026-11-09 删除自动选择的脚本改动已完成以下本地检查：
 

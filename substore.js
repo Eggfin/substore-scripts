@@ -72,11 +72,10 @@ const mediaNodes = [
 const hkPattern = /香港|hong[ _-]*kong|(?:^|[ _-])hkg?(?=[0-9]|$|[ _-])/i;
 const hkNodes = names.filter(name => hkPattern.test(name));
 
-// ST 第一阶段 Fail-Closed：只允许唯一节点；节点缺失时显式拒绝，避免 Stash 空组回退 DIRECT
-const ST_NODE = "Host-V-美国";
-const stNodes = names.includes(ST_NODE)
-  ? [ST_NODE]
-  : ["REJECT"];
+// ST 仅允许白名单内存在的节点；全部缺失时显式拒绝，避免空组回退 DIRECT
+const ST_WHITELIST = ["Host-V-美国", "Host-V-家宽"];
+const availableStNodes = ST_WHITELIST.filter(name => names.includes(name));
+const stNodes = availableStNodes.length ? availableStNodes : ["REJECT"];
 
 config.mode = "rule";
 config["allow-lan"] = false;
