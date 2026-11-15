@@ -49,6 +49,9 @@ const names = nodes.map(n => n.name);
 
 // AI / OpenAI 仅显示指定白名单内现有节点，移除日本节点，另保留「节点选择」
 const AI_NODE = "Host-V-美国";
+// 主策略组始终手动选择；仅控制无历史选择时的初始项和回退顺序
+const mainDefault = names.includes(AI_NODE) ? AI_NODE : names[0];
+const mainNodes = [mainDefault, ...names.filter(name => name !== mainDefault), "DIRECT"];
 const aiWhitelist = [
   AI_NODE,
   "Host-H",
@@ -91,7 +94,8 @@ config["proxy-groups"] = [
   {
     name: G.main,
     type: "select",
-    proxies: [...names, "DIRECT"]
+    "default-selected": mainDefault,
+    proxies: mainNodes
   },
   {
     name: G.crypto,
@@ -337,9 +341,10 @@ config.rules = [
   `RULE-SET,Telegram,${G.telegram}`,
   `RULE-SET,TelegramIP,${G.telegram},no-resolve`,
 
-  // I. 中国大陆直连
+  // I. 中国大陆直连：常见域名优先匹配；未识别域名允许解析 IP 后匹配 CNIP
+  "DOMAIN-SUFFIX,cn,DIRECT",
   `RULE-SET,CN,DIRECT`,
-  `RULE-SET,CNIP,DIRECT,no-resolve`,
+  `RULE-SET,CNIP,DIRECT`,
 
   // J. 国外域名
   `RULE-SET,Foreign,${G.main}`,
