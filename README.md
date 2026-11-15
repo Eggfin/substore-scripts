@@ -32,7 +32,7 @@
 
 | 分组 | 用途 | 默认或首选项（无已保存选择时） |
 |---|---|---|
-| 🚀 节点选择 | 通用代理流量；候选为全部现有节点及 DIRECT | 订阅中的第一个节点 |
+| 🚀 节点选择 | 通用代理流量；候选为全部现有节点及 DIRECT | `Host-V-美国`（存在时），否则订阅中的第一个节点 |
 | 💱 交易所 | 加密货币交易所 | DIRECT |
 | 🤖 AI服务 | Gemini、Copilot、Muse / Meta AI 等 | `Host-V-美国`（存在时） |
 | 🟢 OpenAI | ChatGPT / OpenAI | `Host-V-美国`（存在时） |
@@ -43,7 +43,7 @@
 | 🛑 广告拦截 | 广告域名 | REJECT |
 | 🐟 漏网之鱼 | 未匹配的流量 | 🚀 节点选择 |
 
-AI服务、OpenAI 仍显式设置 `default-selected: Host-V-美国`，美国节点存在时也位于各自候选列表首位。`profile.store-selected: true` 保留客户端以前的选择；更新订阅不表示一定覆盖已有选择，需要在「代理」页确认。
+主策略组 `🚀 节点选择` 现在也优先使用现有的 `Host-V-美国` 作为初始节点，并将其放在候选列表首位；若该节点不存在，退回订阅中的第一个现有节点。此逻辑不进行测速、不自动切换，不能保证节点最快。AI服务、OpenAI 仍显式设置 `default-selected: Host-V-美国`，美国节点存在时也位于各自候选列表首位。`profile.store-selected: true` 保留客户端以前的选择；更新订阅不表示一定覆盖已有选择，需要在「代理」页确认。
 
 ### ST 节点选择与阻断（2026-11-12）
 
@@ -63,6 +63,15 @@ AI服务、OpenAI 仍显式设置 `default-selected: Host-V-美国`，美国节�
 
 - AI服务 / OpenAI 在美国节点缺失时，脚本会从候选中略过它，但 `default-selected` 仍写 `Host-V-美国`；Mihomo 文档说明，默认节点不存在时选择组内首个候选，客户端已有选择也需确认。AI / OpenAI 按白名单顺序保留现有节点，只有五个白名单节点全部缺失时才仅剩 `🚀 节点选择`。**ST 只在两个白名单节点都缺失时选择 `REJECT`**。
 - 节点去重发生在媒体组排除之前。同名 Host 节点被改名为 `Host-H #2` 等名称后，不再精确匹配排除名单，可能出现在 Telegram / YouTube 的直接选项中。此边界暂未修改。
+
+## 国内 App 访问与主策略组优化（2026-11-16）
+
+- 增加 `DOMAIN-SUFFIX,cn,DIRECT`，放在通用 CN 规则集前。专项 AI、交易所、Apple 等规则仍具有更高优先级。
+- 将 `RULE-SET,CNIP,DIRECT,no-resolve` 改为 `RULE-SET,CNIP,DIRECT`，使未命中域名规则的请求在 DNS 成功解析后也有机会通过国内 IP 规则直连。已知 IP 连接保持正常匹配；解析未返回中国大陆 IP 的域名仍可能进入 Foreign 或漏网之鱼。
+- 此改动可能使未命中前面域名规则的请求增加 DNS 查询，因此实际速度仍取决于客户端 DNS 配置和解析质量；如感觉更慢，应先检查 DNS 响应耗时和连接日志，而不是断言已经解决性能问题。
+- 主策略组优先把存在的 `Host-V-美国` 放在候选首位并配置 `default-selected`；如不存在，则仍保留原订阅首节点。无自动选择、测速或故障切换。已有客户端保存的选择优先，更新订阅不一定立即切换节点。
+- 未改变 ST 的 Fail-Closed 候选、AI/OpenAI、交易所、Telegram、YouTube、Apple、广告或最终兜底规则，也未把 `MATCH` 改成直连。
+- 目前仅完成脚本级模拟回归测试；尚需在客户端真实 DNS、规则下载及国内 App 连接日志中验证实际效果。
 
 ## Cloudflare 检测与 ST 同出口
 
@@ -84,7 +93,7 @@ AI服务、OpenAI 仍显式设置 `default-selected: Host-V-美国`，美国节�
 8. Apple
 9. 广告拦截
 10. GitHub、YouTube、Telegram
-11. 中国大陆域名和 IP 直连
+11. `.cn` 域名、CN 规则集及解析后命中 CNIP 的中国大陆 IP 直连
 12. 其他国外域名走 🚀 节点选择
 13. 其余流量走 🐟 漏网之鱼
 
